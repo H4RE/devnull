@@ -21,8 +21,7 @@ no3_0 = foldl count Map.empty
 no3::String -> String
 no3 = map fst . sortBy (comparing snd) . Map.toList . no3_0 . filter (`elem` ['a'..'z']) . map toLower
 
-
-no4 =filter (not . null) . foldl split [""]
+no4_1 = filter (not . null) . foldl split [""]
     where
         split acc char
             | isSplit char = acc ++ [""]
@@ -30,6 +29,12 @@ no4 =filter (not . null) . foldl split [""]
         isSplit::Char -> Bool
         isSplit = (`elem` [' ', '.', ','])
 
+
+no4 str = map fn $ zip [1..] (no4_1 str)
+    where
+        fn (f,s)
+            |f `elem` [1, 5, 6, 7, 8, 9, 15, 16, 19] = take 1 s
+            |otherwise = take 2 s
 
 main::IO()
 main = do
