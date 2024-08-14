@@ -21,6 +21,7 @@ no3_0 = foldl count Map.empty
 no3::String -> String
 no3 = map fst . sortBy (comparing snd) . Map.toList . no3_0 . filter (`elem` ['a'..'z']) . map toLower
 
+no4_1::String -> [String]
 no4_1 = filter (not . null) . foldl split [""]
     where
         split acc char
@@ -35,6 +36,13 @@ no4 str = map fn $ zip [1..] (no4_1 str)
         fn (f,s)
             |f `elem` [1, 5, 6, 7, 8, 9, 15, 16, 19] = take 1 s
             |otherwise = take 2 s
+
+no5::Int -> String -> [String]
+no5 n str
+    | n > length strm = []
+    | otherwise = zipWith (\i _ ->take n (drop i strm)) [0..length strm-n] strm
+        where strm = filter (`elem` ['a'..'z']++['A'..'Z']) str
+
 
 main::IO()
 main = do
@@ -51,8 +59,12 @@ main = do
     -- let str = "Now I need a drink, alcoholic of course, after the heavy lectures involving quantum mechanics."
     -- let ans = no3 str
 
-    let str = "Hi He Lied Because Boron Could Not Oxidize Fluorine. New Nations Might Also Sign Peace Security Clause. Arthur King Can."
-    let ans = no4 str
+    -- let str = "Hi He Lied Because Boron Could Not Oxidize Fluorine. New Nations Might Also Sign Peace Security Clause. Arthur King Can."
+    -- let ans = no4 str
+    -- print ans
+    
+    let str = "I am an NLPer"
+    let ans = no5 5 str
     print ans
 
     -- putStrLn ans
