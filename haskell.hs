@@ -1,5 +1,5 @@
 import Data.Char (toLower)
-import Data.List (sortBy)
+import Data.List (sort, sortBy)
 import Data.Ord (comparing)
 
 import qualified Data.Map as Map
@@ -43,9 +43,30 @@ no5 n str
     | otherwise = zipWith (\i _ ->take n (drop i strm)) [0..length strm-n] strm
         where strm = filter (`elem` ['a'..'z']++['A'..'Z']) str
 
+-- abc363c
+solve::String -> Int -> Int
+solve str n = length $ takeWhile (n>=) (scanl (+) 0 xs)
+    where xs = sortBy (flip compare) $ map read $ words str ::[Int] 
 
 main::IO()
 main = do
+    -- print $ scanl (+) 0 [1,2,3,4,5]
+
+    ln <- getLine
+    let ns = map read $ words ln ::[Int]
+
+
+    lna <- getLine
+    -- let a =sort $ map read $ words lna ::[Int]
+    let ans1 = solve lna (ns!!1)
+
+    lnb <- getLine
+    let ans2 = solve lnb (ns!!2)
+
+    print $ min (head ns) $ min ans1 ans2
+
+
+
     -- let str = "shibainu"
     -- let ans = no0 str
 
@@ -63,10 +84,10 @@ main = do
     -- let ans = no4 str
     -- print ans
     
-    let str = "I am an NLPer"
-    let ans = no5 5 str
-    print ans
-
+    -- let str = "I am an NLPer"
+    -- let ans = no5 5 str
+    -- print ans
+    --
     -- putStrLn ans
 
 
