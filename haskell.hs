@@ -13,7 +13,6 @@ no1 x = [x !! 1] ++ [x !! 3] ++ [x !! 5] ++ [x !! 7]
 no2::String -> String -> String
 no2 xs ys = concat [[x,y]|(x,y)<-zip xs ys]
 
-
 no3_0::String -> Map.Map Char Int
 no3_0 = foldl count Map.empty
     where
@@ -21,6 +20,16 @@ no3_0 = foldl count Map.empty
 
 no3::String -> String
 no3 = map fst . sortBy (comparing snd) . Map.toList . no3_0 . filter (`elem` ['a'..'z']) . map toLower
+
+
+no4 =filter (not . null) . foldl split [""]
+    where
+        split acc char
+            | isSplit char = acc ++ [""]
+            | otherwise = init acc ++ [last acc ++ [char]]
+        isSplit::Char -> Bool
+        isSplit = (`elem` [' ', '.', ','])
+
 
 main::IO()
 main = do
@@ -34,10 +43,13 @@ main = do
     -- let strB = "タクシー"
     -- let ans = no2 strA strB
 
-    let str = "Now I need a drink, alcoholic of course, after the heavy lectures involving quantum mechanics."
-    let ans = no3 str
+    -- let str = "Now I need a drink, alcoholic of course, after the heavy lectures involving quantum mechanics."
+    -- let ans = no3 str
 
+    let str = "Hi He Lied Because Boron Could Not Oxidize Fluorine. New Nations Might Also Sign Peace Security Clause. Arthur King Can."
+    let ans = no4 str
+    print ans
 
-    putStrLn ans
+    -- putStrLn ans
 
 
