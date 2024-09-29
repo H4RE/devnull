@@ -1,59 +1,21 @@
 #include <iostream>
-class Hoge
-{
-public:
-    // クラスに属する関数
-    static void static_method1()
-    {
-        std::cout << "static_method" <<std::endl;
-        return;
-    }
-    static void static_method2()
-    {
-        // メンバにアクセスできない
-        // 以下はエラー
-        // data1;
-        // data2;
-        // this->data1;
-        // this->data2;
-    }
-    static void static_method3(Hoge hoge)
-    {
-        //引数で渡せばアクセスできる
-        std::cout << hoge.data1 << std::endl;
-        //プライベート変数にもアクセスできる
-        std::cout << hoge.data2 << std::endl;
 
-    }
-    void method(){}
-    int data1{1};
-private:
-    int data2{2};
-
-
-};
-class Fuga
-{
-public:
-    void func(Hoge hoge)
-    {
-        // アクセスできる
-        std::cout << hoge.data1 << std::endl;
-        // 通常はプライベートなのでアクセスできない
-        // std::cout << hoge.data2 << std::endl;
-    }
-};
-
+void func();
 int main(int argc, char** argv)
 {
-    // インスタンス無しで呼べる
-    Hoge::static_method1();
-    // 非staticなので呼べない
-    // Hoge::method();
-
-    Hoge hoge;
-    Hoge::static_method3(hoge);
-
-
+    func();
     return 0;
 }
+/*
+- 宣言だけだと、コンパイルはできてその後undefined symbolsでリンクエラー
+
+- a.cppにfuncの定義がある場合、コンパイルできてa.cppのfuncが実行される。
+
+- a.cppとb.cppにfuncの定義があると、duplicate symbolsでリンクエラー
+
+    - b.cppの関数がvoid func(int a);であればコンパイルできaのfuncが実行される
+        int func(void)だとダメ。
+
+- a側にstaticをつけると、コンパイルできbのfuncが呼び出される
+
+ */
