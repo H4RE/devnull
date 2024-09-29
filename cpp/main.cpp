@@ -1,111 +1,99 @@
 #include <iostream>
 
-class Base1
+class Hoge
 {
 public:
-    void wo_vi_ov(){std::cout << "wo vi ov @base" <<std::endl;}
+    void pub(){std::cout <<"public" <<std::endl;}
+protected:
+    void pro(){std::cout <<"private" <<std::endl;}
+private:
+    void pri(){std::cout <<"private" <<std::endl;}
+};
+class Fuga: public Hoge
+{
+public:
+    void fn()
+    {
+        this->pub();//ok
+        this->pro();//ok
+        // this->pri();//ng
+    }
+};
+class FugaPro: protected Hoge
+{
+    // Hogeのpublicがprotectedに変わる
+public:
+    void func()
+    {
+        this->pub();//ok
+        this->pro();//ok
+        // this->pri();//ng
+    }
+};
+class FugaPri: private Hoge
+{
+    // Hogeのpublic, protectedがprivateに変わる
+public:
+    void func()
+    {
+        this->pub();//ok
+        this->pro();//ok
+        // this->pri();//ng
+    }
 };
 
-class Sub1: public Base1
+class FugaProSub: public FugaPro
 {
 public:
-    void wo_vi_ov(){std::cout << "wo vi ov @sub" <<std::endl;}
+    FugaProSub()
+    {
+        this->pro();
+    }
 };
 
-class Base2
+class FugaPriSub: public FugaPri
 {
 public:
-    void wo_vi_ov(){std::cout << "wo vi ov @base" <<std::endl;}
-
-};
-
-class Sub2: public Base2
-{
-public:
-    // これはコンパイルエラー
-    // void wo_vi_ov()override{std::cout << "wo vi ov @sub" <<std::endl;}
-};
-
-class Base3
-{
-public:
-    virtual void wo_vi_ov(){std::cout << "wo vi ov @base" <<std::endl;}
-
-};
-
-class Sub3: public Base3
-{
-public:
-    void wo_vi_ov(){std::cout << "wo vi ov @sub" <<std::endl;}
-};
-
-class Base4
-{
-public:
-    virtual void wo_vi_ov(){std::cout << "wo vi ov @base" <<std::endl;}
-
-};
-
-class Sub4: public Base4
-{
-public:
-    void wo_vi_ov()override{std::cout << "wo vi ov @sub" <<std::endl;}
+    FugaPriSub()
+    {
+        //FugaPriでprivate継承してprivateになっているのでアクセス不可
+        // this->pro();
+    }
 };
 int main(int argc, char** argv)
 {
-    // 1: virtualなし overrideなし
-    {
-        Sub1 sub;
-        sub.wo_vi_ov();//subが呼ばれる
+    Fuga fuga;
+    fuga.pub();
 
-        Base1* base = &sub;
-        // 再定義なので、baseのポインタ経由ではbaseが呼ばれる
-        base->wo_vi_ov();
-    }
+    FugaPro fugapro;
+    //protected継承なのでHogeのpublicがprotectedになる
+    //-->pubにアクセスできない
+    // fugapro.pub();
+    
+    FugaPri fugapri;
+    // fugapri.pub();
 
-    // 2: virtualなし overrideあり
-    {
-    }
-
-    // 3: virtualあり overrideなし
-    {
-        Sub3 sub;
-        sub.wo_vi_ov();//subが呼ばれる
-
-        Base3* base = &sub;
-        // baseにvirtualがついているのでsubが呼ばれる
-        base->wo_vi_ov();//subが呼ばれる
-    }
-    // 4: virtualあり overrideなし
-    {
-        Sub4 sub;
-        sub.wo_vi_ov();//subが呼ばれる
-
-        Base4* base = &sub;
-        // baseにvirtualがついているのでsubが呼ばれる
-        base->wo_vi_ov();//subが呼ばれる
-    }
     return 0;
 }
-
 /*
+ * public
+ *      クラス内、継承先、クラス外からアクセス可能
+ * protected
+ *      クラス内、継承先からアクセス可能
+ * private
+ *      クラス内からアクセス可能
  *
- * Base Class
- * virtual あり　なし
- * Sub　Class
- * override　あり　なし
+ * public継承
+ *      アクセス権の変更なし
  *
- * 1. virtual なし and override なし
- * 関数の再定義になる
- * Subでインスタンスして呼び出すとSubの関数が呼ばれるが、
- * Baseのポインタ経由で呼び出すとbaseの関数が呼ばれる
+ * protected継承
+ *      public-->protectedになる
+ *      なので、baseクラスのpublicにクラス外からアクセスできなくなる
  *
- * 2. virtual なし and override あり
- * overrideするものがないのでコンパイルエラー
+ * private継承
+ *      public-->privateになる
+ *      なので、baseクラスのpublicにクラス外からアクセスできなくなる
+ *      一方でprivate継承でもsubクラスのメソッドから親クラスのpublic、protectedメソッドへはアクセスできる点に注意が必要
  *
- * 3. virtual あり and override なし
- * 4. virtual あり and override あり
- * どちらもSubが呼ばれる
- * baseのポインタ経由でもvirtualが付いているのでsubが呼ばれる
  *
  * */
